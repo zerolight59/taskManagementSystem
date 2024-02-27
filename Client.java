@@ -22,6 +22,7 @@ public class Client {
             sout= new DataOutputStream(cs.getOutputStream());
             s = new Scanner(System.in);
             System.out.println("\nClient\n");
+            
             System.out.println(sin.readUTF());
             System.out.print("your choise :");
             ch=s.nextInt();s.nextLine();
@@ -87,26 +88,18 @@ public class Client {
                         sout.writeUTF(cPass);
                         access = sin.readUTF();
                         if (access.equals("success")) {
-                            System.out.println("Login Successful\nWelcome "+sin.readUTF());
-                            System.out.println(sin.readUTF());
-                            System.out.println("your choise :");
-                            ch=s.nextInt();s.nextLine();
-                            sout.writeInt(ch);
-                            switch (ch) {
-                                case 1:
-                                    createTask(sout, sin);
-                                    break;
-                                case 2:
-                                    displayTasks(sout, sin);
-                                    break;
-                                case 3:
-                                    displayPendingTasks(sout, sin);
-                                    break;
-                                case 4:
-                                    updateTaskStatus(sout, sin, s);
-                                default:
-                                    break;
-                            }
+                            System.out.println("Login Successful");
+                            System.out.println("=====================================");
+                            System.out.println("Wselcome "+sin.readUTF());
+                            String loop;
+                            do{
+                            menu(sout,sin,s);
+                            System.out.println("do you want to continue !(yes/no)");
+                            loop=s.nextLine();
+                            sout.writeUTF(loop);
+                            System.out.println("----------------------------------");
+                            }while(loop.equals("yes"));
+
                         } else {
                             System.out.println("Login Unsuccessful");
                             System.exit(0);
@@ -120,6 +113,7 @@ public class Client {
 
     public static void createTask(DataOutputStream sout, DataInputStream sin) {
         try {
+            System.out.println("----------------------------------");
             // Prompt to select the user
             System.out.println(sin.readUTF());
     
@@ -152,6 +146,7 @@ public class Client {
             // Server responds with success or failure
             String response = sin.readUTF();
             System.out.println(response);
+            System.out.println("----------------------------------");
         } catch (IOException e) {
             System.out.println("Error in createTask: " + e);
         }
@@ -162,6 +157,7 @@ public class Client {
     
     
     public static void displayTasks(DataOutputStream sout, DataInputStream sin) {
+        System.out.println("=====================================");
         try {
             // Receive the task details from the server
             String taskDetails = sin.readUTF();
@@ -189,10 +185,12 @@ public class Client {
                     if (parts.length >= 2) {
                         String key = parts[0].trim();
                         String value = parts[1].trim();
-    
+                        
+                        System.out.println("----------------------------------");
                         // Extracted information based on the key
                         switch (key) {
                             case "Task ID":
+                            System.out.println("________________________________");
                                 int taskId = Integer.parseInt(value);
                                 System.out.println("Task ID: " + taskId);
                                 break;
@@ -209,12 +207,15 @@ public class Client {
                                 // Handle unknown key or add more cases as needed
                                 break;
                         }
+                        
                     }
+                    
                 }
             }
         } catch (IOException e) {
             System.out.println("Error displaying tasks: " + e);
         }
+        System.out.println("=====================================");
     }
     
     
@@ -223,6 +224,7 @@ public class Client {
     
     public static void displayPendingTasks(DataOutputStream sout, DataInputStream sin) {
         try {
+            System.out.println("=====================================");
             // Receive the task details from the server
             String taskDetails = sin.readUTF();
     
@@ -252,7 +254,7 @@ public class Client {
                     if (parts.length >= 2) {
                         String key = parts[0].trim();
                         String value = parts[1].trim();
-    
+                        System.out.println("----------------------------------");
                         // Extracted information based on the key
                         switch (key) {
                             case "Task ID":
@@ -277,15 +279,19 @@ public class Client {
                                 // Handle unknown key or add more cases as needed
                                 break;
                         }
+                        
                     }
                 }
             }
         } catch (IOException e) {
             System.out.println("Error displaying tasks: " + e);
         }
+        System.out.println("=====================================");
+        
     }
     
     public static void updateTaskStatus(DataOutputStream sout, DataInputStream sin, Scanner scanner) {
+        System.out.println("=====================================");
         try {
             // Receive the prompt from the server
             String prompt = sin.readUTF();
@@ -303,10 +309,12 @@ public class Client {
             // Check if the user has access to the task details
             if (response.equals("Current task details:")) {
                 // Receive and display the current task details from the server
+                System.out.println("----------------------------------");
                 System.out.println( sin.readUTF());
                 System.out.println(sin.readUTF());
                 System.out.println( sin.readUTF());
                 System.out.println(sin.readUTF());
+                System.out.println("----------------------------------");
     
                 // Prompt the user for the new status
                 System.out.print("Enter the new status for the task: ");
@@ -337,6 +345,33 @@ public class Client {
         }
     }
     
+    public static void menu(DataOutputStream sout, DataInputStream sin, Scanner s)throws Exception{
+        System.out.println("=====================================");
+        int ch;
+       System.out.println(sin.readUTF());
+       System.out.println("your choise :");
+       ch=s.nextInt();s.nextLine();
+       sout.writeInt(ch);
+       switch (ch) {
+           case 1:
+               createTask(sout, sin);
+               break;
+           case 2:
+               displayTasks(sout, sin);
+               break;
+           case 3:
+               displayPendingTasks(sout, sin);
+               break;
+           case 4:
+               updateTaskStatus(sout, sin, s);
+               break;
+           case 5:
+                System.exit(0);
+                break;
+           default:
+               break;
+       }
+}
     
     
 }

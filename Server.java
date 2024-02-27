@@ -133,25 +133,12 @@ class ClientHandler implements Runnable {
                 user=new User(rs.getInt("userID"), rs.getString("username"), rs.getString("password"));
                 sout.writeUTF(user.username);
                 System.out.println("Client connected is "+user.username);
+                String loop;
+                do{
+                menu(sout,sin,db);
+                loop=sin.readUTF();
+                }while(loop.equals("yes"));
 
-                sout.writeUTF("1. create task\n2. Display all the task\n3. Display pending task\n4. Update the progress");
-                ch=sin.readInt();
-                switch (ch) {
-                    case 1:
-                        createTask(sout, sin, db);
-                        break;
-                    case 2:
-                        displayTasks(sout, sin, db);
-                        break;
-                    case 3:
-                        displayPendingTasks(sout,sin, db);
-                        break;
-                    case 4:
-                        updateTaskStatus(sout, sin, db);
-                        break;
-                    default:
-                        break;
-                }
             } else {
                 sout.writeUTF("failure");
             }
@@ -331,7 +318,7 @@ class ClientHandler implements Runnable {
             sout.writeUTF("Description: " + taskResultSet.getString("description"));
             sout.writeUTF("Current Status: " + taskResultSet.getString("status"));
     
-            sout.writeUTF("Enter the new status for the task:");
+            // sout.writeUTF("Enter the new status for the task:");
             String newStatus = sin.readUTF();
     
             // Update the status of the task in the database
@@ -346,5 +333,27 @@ class ClientHandler implements Runnable {
         }
     }
     
+
+    public void menu(DataOutputStream sout, DataInputStream sin, CDataBase db)throws Exception{
+        int ch;
+        sout.writeUTF("1. create task\n2. Display all the task\n3. Display pending task\n4. Update the progress\n5.exit");
+                ch=sin.readInt();
+                switch (ch) {
+                    case 1:
+                        createTask(sout, sin, db);
+                        break;
+                    case 2:
+                        displayTasks(sout, sin, db);
+                        break;
+                    case 3:
+                        displayPendingTasks(sout,sin, db);
+                        break;
+                    case 4:
+                        updateTaskStatus(sout, sin, db);
+                        break;
+                    default:
+                        break;
+                }
+    }
     
 }
